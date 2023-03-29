@@ -1,128 +1,111 @@
-import React, { Component } from "react";
-import Chart from "react-apexcharts";
+import ReactApexChart from 'react-apexcharts';
 
-class Graphic extends Component {
-    constructor(props) {
-        super(props);
 
-        this.state = {
-            options: {
-                series: [
+export function Chart() {
+    const options = {
+        series: [
+            {
+                name: "cambio",
+                data: [
                     {
-                        name: "cambio",
-                        data: [
-                            {
-                                x: new Date("2018-02-12").getTime(),
-                                y: 5.18,
-                            },
-                            {
-                                x: new Date("2018-02-13").getTime(),
-                                y: 5.3,
-                            },
-                            {
-                                x: new Date("2018-02-14").getTime(),
-                                y: 5.18,
-                            },
-                            {
-                                x: new Date("2018-02-15").getTime(),
-                                y: 5.11,
-                            },
-                            {
-                                x: new Date("2018-02-16").getTime(),
-                                y: 5.18,
-                            },
-                            {
-                                x: new Date("2018-02-17").getTime(),
-                                y: 5.25,
-                            },
-                            {
-                                x: new Date("2018-02-18").getTime(),
-                                y: 5.18,
-                            },
-                            {
-                                x: new Date("2018-02-19").getTime(),
-                                y: 5.2,
-                            },
-                        ],
+                        x: new Date("2023-03-22").getTime(),
+                        y: 5.26,
+                    },
+                    {
+                        x: new Date("2023-03-23").getTime(),
+                        y: 5.26,
+                    },
+                    {
+                        x: new Date("2023-03-24").getTime(),
+                        y: 5.29,
+                    },
+                    {
+                        x: new Date("2023-03-25").getTime(),
+                        y: 5.29,
+                    },
+                    {
+                        x: new Date("2023-03-26").getTime(),
+                        y: 5.29,
+                    },
+                    {
+                        x: new Date("2023-03-27").getTime(),
+                        y: 5.23,
+                    },
+                    {
+                        x: new Date("2023-03-28").getTime(),
+                        y: 5.17,
+                    },
+                    {
+                        x: new Date("2023-03-29").getTime(),
+                        y: 5.17,
                     },
                 ],
-                chart: {
-                    height: 350,
-                    type: "area",
-                    toolbar: {
-                        show: false,
-                    },
-                },
-                dataLabels: {
-                    enabled: false,
-                },
-                stroke: {
-                    curve: "straight",
-                },
-                yaxis: {
-                    min: 5,
-                    tickAmount: 4,
-                    labels: {
-                        formatter: (value) => {
-                            return value.toFixed(1).replace('.', ',')
-                        },
-                    },
-                },
-                xaxis: {
-                    labels: {
-                        show: false,
-                    },
-                    tooltip: {
-                        enabled: false,
-                    },
-                    axisTicks: {
-                        show: false,
-                    },
-                },
-                fill: {
-                    gradient: {
-                        shadeIntensity: 1,
-                        opacityFrom: 0.7,
-                        opacityTo: 0.9,
-                        stops: [0, 90, 100],
-                    },
-                },
-                colors: ["#7C3AED"],
-                tooltip: {
-                    custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-                        return `<div class="tooltip">
-                    <span>${String(series[seriesIndex][dataPointIndex]).replace('.', ',')}</span>
-                    <span>${new Date(
-                            w.globals.seriesX[seriesIndex][dataPointIndex]
-                        ).toLocaleDateString("pt-BR", {
-                            weekday: "short",
-                            month: "short",
-                            day: "numeric",
-                        })}</span>
-                    </div>`
-                    },
+            },
+        ],
+        chart: {
+            height: 350,
+            type: "area",
+            toolbar: {
+                show: false,
+            },
+        },
+        dataLabels: {
+            enabled: false,
+        },
+        stroke: {
+            curve: "straight",
+        },
+        yaxis: {
+            min: 5,
+            tickAmount: 4,
+            labels: {
+                formatter: (value) => {
+                    return value.toFixed(1).replace(".", ",");
                 },
             },
-        }
-    }
+        },
+        xaxis: {
+            labels: {
+                show: false,
+            },
+            tooltip: {
+                enabled: false,
+            },
+            axisTicks: {
+                show: false,
+            },
+        },
+        fill: {
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.7,
+                opacityTo: 0.9,
+                stops: [0, 90, 100],
+            },
+        },
+        colors: ["#7C3AED"],
+        tooltip: {
+            custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+                return `<div class="tooltip">
+          <span>${String(series[seriesIndex][dataPointIndex]).replace(
+                    ".",
+                    ","
+                )}</span>
+          <span>${new Date(
+                    w.globals.seriesX[seriesIndex][dataPointIndex]
+                ).toLocaleDateString("pt-BR", {
+                    weekday: "short",
+                    month: "short",
+                    day: "numeric",
+                })}</span>
+          </div>`;
+            },
+        },
+    };
 
-    render() {
-        return (
-            <div>
-                <div className="row">
-                    <div className="mixed-chart">
-                        <Chart
-                            options={this.state.options}
-                            series={this.state.series}
-                            type="area"
-                            width="500"
-                        />
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    return (
+        <div id="chart">
+            <ReactApexChart options={options} series={options.series} type="area" height={350} />
+        </div>
+    );
 }
-
-
-export default Graphic;
