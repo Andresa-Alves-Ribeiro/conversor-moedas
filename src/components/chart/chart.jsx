@@ -1,50 +1,13 @@
+import { useState, useEffect } from 'react';
 import ReactApexChart from 'react-apexcharts';
-
+import axios from 'axios';
 
 export function Chart() {
-    const options = {
-        series: [
-            {
-                name: "cambio",
-                data: [
-                    {
-                        x: new Date("2023-03-22").getTime(),
-                        y: 5.26,
-                    },
-                    {
-                        x: new Date("2023-03-23").getTime(),
-                        y: 5.26,
-                    },
-                    {
-                        x: new Date("2023-03-24").getTime(),
-                        y: 5.29,
-                    },
-                    {
-                        x: new Date("2023-03-25").getTime(),
-                        y: 5.29,
-                    },
-                    {
-                        x: new Date("2023-03-26").getTime(),
-                        y: 5.29,
-                    },
-                    {
-                        x: new Date("2023-03-27").getTime(),
-                        y: 5.23,
-                    },
-                    {
-                        x: new Date("2023-03-28").getTime(),
-                        y: 5.17,
-                    },
-                    {
-                        x: new Date("2023-03-29").getTime(),
-                        y: 5.17,
-                    },
-                ],
-            },
-        ],
+    const [options, setOptions] = useState({
+        series: [],
         chart: {
             height: 350,
-            type: "area",
+            type: 'area',
             toolbar: {
                 show: false,
             },
@@ -53,26 +16,30 @@ export function Chart() {
             enabled: false,
         },
         stroke: {
-            curve: "straight",
+            curve: 'straight',
         },
         yaxis: {
-            min: 5,
+            min: 0,
             tickAmount: 4,
             labels: {
                 formatter: (value) => {
-                    return value.toFixed(1).replace(".", ",");
+                    return value.toFixed(2).replace('.', ',');
                 },
             },
         },
         xaxis: {
+            type: 'datetime',
             labels: {
-                show: false,
-            },
-            tooltip: {
-                enabled: false,
-            },
-            axisTicks: {
-                show: false,
+                datetimeFormatter: {
+                    year: 'yyyy',
+                    month: 'MMM \'yy',
+                    day: 'dd MMM',
+                    hour: 'HH:mm',
+                },
+                style: {
+                    fontSize: '14px',
+                    fontFamily: 'Helvetica, Arial, sans-serif',
+                },
             },
         },
         fill: {
@@ -83,29 +50,94 @@ export function Chart() {
                 stops: [0, 90, 100],
             },
         },
-        colors: ["#7C3AED"],
+        colors: ['#7C3AED', '#FF9800', '#F44336', '#4CAF50', '#4c77af', '#af4ca2', '#4ca0af', '#c2c507', '#af4c7d'],
         tooltip: {
-            custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-                return `<div class="tooltip">
-          <span>${String(series[seriesIndex][dataPointIndex]).replace(
-                    ".",
-                    ","
-                )}</span>
-          <span>${new Date(
-                    w.globals.seriesX[seriesIndex][dataPointIndex]
-                ).toLocaleDateString("pt-BR", {
-                    weekday: "short",
-                    month: "short",
-                    day: "numeric",
-                })}</span>
-          </div>`;
+            x: {
+                format: 'dd MMM yyyy',
+            },
+            y: {
+                formatter: (value) => {
+                    return value.toFixed(2).replace('.', ',');
+                },
             },
         },
-    };
+
+    });
+
+    const [series, setSeries] = useState([
+        {
+            name: 'BRL',
+            data: [],
+        },
+        {
+            name: 'USD',
+            data: [],
+        },
+        {
+            name: 'EUR',
+            data: [],
+        },
+        {
+            name: 'GBP',
+            data: [],
+        },
+        {
+            name: 'JPY',
+            data: [],
+        },
+        {
+            name: 'CAD',
+            data: [],
+        },
+        {
+            name: 'AUD',
+            data: [],
+        },
+        {
+            name: 'CNY',
+            data: [],
+        },
+        {
+            name: 'CHF',
+            data: [],
+        },
+    ]);
+
+    useEffect(() => {
+        async function fetchExchangeRates() {
+            try {
+                const response = await axios.get('https://api.exchangerate.host/timeseries', {
+                    params: {
+                        base: 'BRL',
+                        symbols: 'USD,EUR,GBP,JPY,CAD,AUD,CNY,CHF',
+                        start_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().substr(0, 10),
+                        end_date: new Date().toISOString().substr(0, 10),
+                    },
+                });
+
+                const rates = response.data.rates;
+
+                const newSeries = series.map((item) => {
+                    const data = Object.entries(rates).map(([date, { USD, EUR, GBP, JPY, CAD, AUD, CNY, CHF }]) => ({
+                        x: new Date(date).getTime(),
+                        y: item.name === 'BRL' ? 1 : eval(item.name) / USD,
+                    }));
+
+                    return { ...item, data };
+                });
+
+                setSeries(newSeries);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        fetchExchangeRates();
+    }, []);
 
     return (
         <div id="chart">
-            <ReactApexChart options={options} series={options.series} type="area" height={350} />
+            <ReactApexChart options={options} series={series} type="bar" height={350} />
         </div>
     );
 }
