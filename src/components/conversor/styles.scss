@@ -152,3 +152,29 @@ li {
   position: relative;
   z-index: 0;
 }
+
+@media only screen and (max-width: 768px) {
+  main {
+    padding: 5rem;
+    padding-top: 11rem;
+    width: 85%;
+    gap: 4rem;
+  }
+
+  .conversor .wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 4rem;
+  }
+
+  .middle {
+    width: 4rem;
+    height: 4rem;
+    margin-left: 13rem;
+  }
+
+  .wrapper {
+    padding-top: -1rem;
+  }
+
+}
